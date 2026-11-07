@@ -1,0 +1,31 @@
+{
+  "retrieved_utc": "2026-11-07T14:54:30+00:00",
+  "table": "pscomppars",
+  "query": "select pl_name,hostname,ra,dec,pl_orbper,pl_tranmid,pl_trandur,pl_orbtper,pl_orbeccen,pl_orblper,pl_orbsmax,pl_orbincl,pl_rade,pl_bmasse,pl_eqt,st_rad,st_teff,st_mass,sy_jmag,sy_hmag,sy_kmag,tran_flag from pscomppars",
+  "n_rows": 6464,
+  "columns": [
+    "pl_name",
+    "hostname",
+    "ra",
+    "dec",
+    "pl_orbper",
+    "pl_tranmid",
+    "pl_trandur",
+    "pl_orbtper",
+    "pl_orbeccen",
+    "pl_orblper",
+    "pl_orbsmax",
+    "pl_orbincl",
+    "pl_rade",
+    "pl_bmasse",
+    "pl_eqt",
+    "st_rad",
+    "st_teff",
+    "st_mass",
+    "sy_jmag",
+    "sy_hmag",
+    "sy_kmag",
+    "tran_flag"
+  ],
+  "note": "Composite table: columns may come from different source papers for the same planet."
+}
