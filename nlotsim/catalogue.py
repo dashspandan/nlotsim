@@ -151,10 +151,16 @@ def to_params(row, band='K'):
         assumed.append('conjunction epoch derived from periastron '
                        '(less reliable; see catalogue docstring)')
 
-    # J, H, Ks are all the archive carries; Y is not offered (see
-    # bands.py for why, and how to restore it with a hand-entered
-    # magnitude).
-    mag = g({'J': 'sy_jmag', 'H': 'sy_hmag', 'K': 'sy_kmag'}[band])
+    # The archive carries 2MASS only (J, H, Ks).  A Y request is
+    # prefilled from J, the nearest band it does have, and flagged so
+    # the user can type a real Y magnitude over it.
+    if band == 'Y':
+        mag = g('sy_jmag')
+        if np.isfinite(mag):
+            assumed.append('no Y magnitude in the catalogue, so the J '
+                           'value is shown; replace it if you have one')
+    else:
+        mag = g({'J': 'sy_jmag', 'H': 'sy_hmag', 'K': 'sy_kmag'}[band])
     if not np.isfinite(mag):
         mag = g('sy_kmag')
         if np.isfinite(mag):

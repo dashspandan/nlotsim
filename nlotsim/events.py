@@ -175,7 +175,7 @@ def exposure_time(mag, band, site, resolution, kp_kms=None, period_d=None,
 
 def n_exposures(hours, t_exp_s, t_duty_s):
     """
-    How many exposures fit in `hours`, following ratri.py:
+    How many exposures fit in `hours`, following ratri:
 
         n = (T + t_duty) / (t_exp + t_duty)
 

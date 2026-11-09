@@ -2,7 +2,7 @@
 Observing sites.  Longitudes are degrees EAST.
 
 Collecting areas are effective, not pi r^2: NLOT's 121 m^2 is 90
-segments of 1.35 m^2 (ratri.py), equivalent to a 12.4 m filled aperture.
+segments of 1.35 m^2 (ratri), equivalent to a 12.4 m filled aperture.
 
 Throughput is the LEAST reliable input.  It is degenerate with the band
 zero point, so comparing against a published SNR constrains only their
@@ -10,7 +10,7 @@ product; with the zero points pinned by Cohen et al. 2003, throughput
 alone sets the absolute SNR scale.
 
 NLOT uses the measured GIANO efficiency curve (load_giano_throughput),
-as a proxy for a GIANO-like instrument -- the same proxy ratri.py uses.
+as a proxy for a GIANO-like instrument -- the same proxy ratri uses.
 Band means from that curve are 1.23% (J), 2.04% (H), 2.64% (K), against
 the flat 8% this file previously assumed, which overstated K by 3x and
 hence the SNR by sqrt(3).
@@ -32,7 +32,7 @@ def load_giano_throughput():   # kept for backwards compatibility
     Measured GIANO efficiency as (wl_um, throughput), for use as a
     GIANO-like proxy.
 
-    Derived from the 50 x 2048 echelle order traces used by ratri.py,
+    Derived from the 50 x 2048 echelle order traces used by ratri,
     flattened, sorted and median-binned to ~1100 points (band means
     preserved to ~1%).  Inter-order gaps are left as gaps rather than
     interpolated across, because no light is collected there; the band
@@ -64,25 +64,45 @@ SITES = {
         name='NLOT (Hanle)', lat=32.7794, lon=78.9661, height=4535.0,
         area_m2=121.0, throughput=_GIANO_CURVE, t_duty_s=60.0,
         resolution=60000,
-        note='Proposed. Area and duty time from ratri.py '
-             '(nlot_ccd_giano); throughput is the measured GIANO '
-             'efficiency curve used as a GIANO-like proxy.'),
+        note='Proposed site in Ladakh, India.'),
     'MaunaKea': dict(
         name='Mauna Kea', lat=19.8255, lon=-155.4683, height=4204.0,
         area_m2=76.0, throughput=0.05, t_duty_s=40.0, resolution=70000,
-        note='Generic 10 m-class reference site. Throughput is a PLACEHOLDER, not a budget.'),
+        note='Hawaii, USA.'),
     'Paranal': dict(
         name='Cerro Paranal', lat=-24.6268, lon=-70.4045, height=2635.0,
         area_m2=52.8, throughput=0.05, t_duty_s=40.0, resolution=100000,
-        note='Generic VLT UT reference site. Throughput is a PLACEHOLDER, not a budget.'),
+        note='Atacama Desert, Chile.'),
     'LaPalma': dict(
         name='Roque de los Muchachos', lat=28.7540, lon=-17.8900,
         height=2370.0, area_m2=10.0, throughput=0.05, t_duty_s=40.0,
         resolution=50000,
-        note='TNG-like. Throughput is a PLACEHOLDER, not a budget.'),
+        note='La Palma, Canary Islands.'),
 }
 
 DEFAULT_SITE = 'NLOT'
+
+
+def custom_site(name, lat, lon, height_m, area_m2, t_duty_s=60.0,
+                resolution=60000, throughput=None):
+    """
+    Build a site from user-supplied coordinates.
+
+    lon is degrees EAST and negative west of Greenwich.  height is
+    metres above sea level; it only affects the light travel time
+    correction, at the centimetre level, so a rough value is fine.
+    """
+    if not -90 <= lat <= 90:
+        raise ValueError('latitude must be between -90 and +90')
+    if not -180 <= lon <= 360:
+        raise ValueError('longitude must be between -180 and +360')
+    return dict(name=name or 'Custom site', lat=float(lat),
+                lon=float(lon), height=float(height_m),
+                area_m2=float(area_m2), t_duty_s=float(t_duty_s),
+                resolution=int(resolution),
+                throughput=(throughput if throughput is not None
+                            else _GIANO_CURVE),
+                note='User-defined.')
 
 
 def get_site(key_or_dict):

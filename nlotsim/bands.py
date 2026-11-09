@@ -72,6 +72,13 @@ class Band:
 
 
 BANDS = {
+    # Hewett et al. 2006: lambda_eff 1.0305 um, F_nu 2026 Jy,
+    # F_lambda 5.71e-9 W m^-2 um^-1 = 5.71e-13 W cm^-2 um^-1.
+    # (An earlier version had 2.026e-13 here, which was the 2026 Jy
+    # figure with an exponent stuck on it: low by a factor 2.82, so Y
+    # signal to noise was low by 1.68.)
+    'Y': Band('Y', 1.0305, 5.71e-13, width_um=0.102,
+              source='Hewett et al. 2006, MNRAS 367, 454 (UKIRT/WFCAM)'),
     'J': Band('J', 1.235, 3.129e-13, width_um=0.162,
               source='Cohen et al. 2003, AJ 126, 1090 (2MASS)'),
     'H': Band('H', 1.662, 1.133e-13, width_um=0.251,
@@ -82,28 +89,28 @@ BANDS = {
 
 DEFAULT_BAND = 'K'
 
-# Y IS DELIBERATELY ABSENT.
+# A NOTE ON Y.
 #
-# The NASA Exoplanet Archive carries 2MASS photometry only -- J, H, Ks
-# -- and Y is not a 2MASS band, so there is no sy_ymag to prefill from.
-# Computing a Y SNR would mean guessing a Y - J colour, and the result
-# would look as authoritative as the others while resting on an
-# assumption none of them need.  Y is also the weakest band for
-# emission: its contrast is ~3.6% of K at T_p = 1500 K.
+# The instrument curves here all reach shortward of 0.98 um, so Y is
+# covered on the instrument side.  What the NASA Exoplanet Archive does
+# NOT carry is a Y magnitude: it holds 2MASS photometry only (J, H, Ks).
+# So a Y calculation is prefilled from J and flagged, and the user can
+# type a real Y magnitude over it.  For a solar-type star Y - J is a few
+# tenths of a magnitude.
 #
-# WHY YOU MIGHT WANT IT BACK: Y contains He I 10830 A, the standard
-# probe of escaping atmospheres, and it lies inside a GIANO-like
-# 0.95-2.45 um range.  For transmission the scale-height contrast is
-# geometric and carries no wavelength penalty, so Y is not
-# disadvantaged there -- only for emission.
+# Y is the weakest band for emission, roughly 3.6% of K's contrast at
+# 1500 K, but it contains He I 10830 A, the standard probe of escaping
+# atmospheres, and for transmission the scale-height contrast carries no
+# wavelength penalty.
 #
-# To restore it, add
-#     'Y': Band('Y', 1.0305, 2.026e-13, width_um=0.102,
-#               source='Hewett et al. 2006, MNRAS 367, 454 (UKIRT/WFCAM)'),
-# to BANDS above, and supply the magnitude by hand rather than from the
-# catalogue.  Note UKIRT/WFCAM is a different photometric system from
-# 2MASS, so a Y and a J magnitude for one star are not on a common
-# scale to better than a few per cent.
+# UKIRT/WFCAM is a different photometric system from 2MASS, so a Y and a
+# J magnitude for one star are not on a common scale to better than a
+# few per cent.  There is also a definitional difference: the 2MASS
+# response curves include the atmosphere and detector QE, while the
+# WFCAM ones do not.  Since this package applies atmospheric
+# transmission separately, the Y figures are marginally cleaner in that
+# respect than J, H and K, which carry a little atmosphere twice.  The
+# effect is small, a few per cent, but it is there.
 
 
 def resolve_throughput(throughput, band, mode='band_mean'):

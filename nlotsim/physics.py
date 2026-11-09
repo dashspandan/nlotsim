@@ -49,7 +49,7 @@ def ecc_anomaly(M, e, tol=1e-10, itmax=200):
     """
     Eccentric anomaly by Newton-Raphson on E - e sin(E) - M = 0.
 
-    Ported from ratri.py (Dash et al. 2024) so results agree, with one
+    Ported from ratri (Dash et al. 2024) so results agree, with one
     change: an iteration cap.  The original loops on
     `while max(abs(fn)) > tol`, which cannot terminate if any element
     fails to converge (e -> 1, or a NaN entering M).  The cap turns that
@@ -282,8 +282,18 @@ def build_barycentric(times, lat_deg, lon_deg, height_m, step_days=2.0):
     grid = np.arange(jd[0], jd[-1] + step_days, step_days)
     tc = Time(grid, format='jd', scale='utc', location=loc)
 
-    r_earth = get_body_barycentric('earth', tc).xyz.to(u.au).value.T
-    r_obs = tc.location.get_gcrs_posvel(tc)[0].xyz.to(u.au).value.T
+    # astropy warns that Earth-orientation (IERS) data does not extend to
+    # future dates and falls back to a 50-year mean, costing arcsecond
+    # accuracy in polar motion.  That is irrelevant here: an arcsecond of
+    # Earth orientation moves the observer by about 9 m, which is 30
+    # nanoseconds of light travel time, against a correction of up to
+    # 500 seconds.  Silence it rather than print it on every run.
+    import warnings as _warnings
+    with _warnings.catch_warnings():
+        _warnings.filterwarnings('ignore', message='.*polar motion.*')
+        _warnings.filterwarnings('ignore', message='.*IERS.*')
+        r_earth = get_body_barycentric('earth', tc).xyz.to(u.au).value.T
+        r_obs = tc.location.get_gcrs_posvel(tc)[0].xyz.to(u.au).value.T
     return dict(grid=grid,
                 dtdb_s=float(tc[0].tdb.jd - tc[0].utc.jd) * _DAY_S,
                 r=r_earth + r_obs)

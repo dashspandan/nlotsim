@@ -2,7 +2,7 @@
 Atmospheric transmission.
 
 The instrument efficiency curves in this package (GIANO and friends) are
-INSTRUMENT ONLY -- they exclude the atmosphere.  ratri.py multiplies
+INSTRUMENT ONLY -- they exclude the atmosphere.  ratri multiplies
 them by a separate transmission spectrum from ESO's skycalc, and so does
 this module, so the two agree.
 
@@ -32,7 +32,7 @@ default is the mean, which is conservative.
 
 WATER VAPOUR is not modelled here.  Only PWV 2.5 mm is shipped, and
 scaling transmission to another PWV is not a simple power law -- the
-water lines saturate.  ratri.py handles it by interpolating between
+water lines saturate.  ratri handles it by interpolating between
 skycalc tables computed at several PWV values, which is the right
 approach; generate those tables and pass them in if you need it.
 """

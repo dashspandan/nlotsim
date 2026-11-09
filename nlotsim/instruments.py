@@ -2,8 +2,8 @@
 Measured instrument efficiency curves.
 
 All are INSTRUMENT ONLY -- they exclude the atmosphere, which
-atmosphere.py supplies separately, exactly as ratri.py does.  Each was
-derived from the echelle order traces used by ratri.py: flattened,
+atmosphere.py supplies separately, exactly as ratri does.  Each was
+derived from the echelle order traces used by ratri: flattened,
 sorted, positive values only, median-binned to ~1100 points with band
 means preserved to about 1%.  Inter-order gaps are left as gaps rather
 than interpolated across, since no light is collected there.
@@ -32,7 +32,7 @@ _ARCHIVE = os.path.join(_DATA, 'throughput_instruments.npz')
 INSTRUMENTS = {
     'giano': dict(
         label='GIANO-B (TNG)',
-        note='Proxy for a GIANO-like NLOT instrument, as in ratri.py.',
+        note='Proxy for a GIANO-like NLOT instrument, as in ratri.',
         telescope_m=3.58, coverage_um=(0.935, 2.422)),
     'carmenes': dict(
         label='CARMENES NIR (Calar Alto)',
